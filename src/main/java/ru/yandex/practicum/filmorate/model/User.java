@@ -1,31 +1,30 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.time.LocalDate;
 
-/**
- * Film.
- */
 @Slf4j
 @Data
-public class Film {
+public class User {
     Long id;
 
+    @NotBlank
+    @Email
     @NotNull
+    String email;
+
+    @NotNull
+    @NotBlank
+    String login;
+
     String name;
 
-    @Size(min = 1, max = 200)
-    String description;
-
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
-    LocalDate releaseDate;
-
-    @Min(1)
-    int duration;
+    LocalDate birthday;
 }
