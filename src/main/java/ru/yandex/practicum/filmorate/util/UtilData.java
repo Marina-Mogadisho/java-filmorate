@@ -1,7 +1,5 @@
 package ru.yandex.practicum.filmorate.util;
 
-import ru.yandex.practicum.filmorate.exception.ValidationException;
-
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
