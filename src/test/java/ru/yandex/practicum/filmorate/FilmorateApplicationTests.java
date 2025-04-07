@@ -23,7 +23,7 @@ class FilmorateApplicationTests {
     @AfterAll
     static void stop() {
         System.out.println("STOP ========================================================");
-        System.exit(0);
+        //System.exit(0);
     }
 
     @Test
