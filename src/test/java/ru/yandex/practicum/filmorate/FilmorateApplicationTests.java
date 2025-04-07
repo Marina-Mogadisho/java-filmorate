@@ -73,8 +73,7 @@ class FilmorateApplicationTests {
                         "\"birthday\": \"2086-08-20\"}");
         assertEquals(500, response6.getCod(), "Тест на дату рождения");
 
-        ResponseClient response7 = UtilHttp.send("POST"
-                , "http://localhost:8080/users",
+        ResponseClient response7 = UtilHttp.send("POST", "http://localhost:8080/users",
                 "{}");
         assertEquals(500, response7.getCod(), "Тест на пустое тело запроса");
     }
