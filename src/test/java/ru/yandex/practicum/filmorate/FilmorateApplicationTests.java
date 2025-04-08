@@ -49,12 +49,12 @@ class FilmorateApplicationTests {
                 "http://localhost:8080/users",
                 "{\"login\": \"dolore\",\"name\": \"NickName\",\"email\": \"mail.ru\"," +
                         "\"birthday\": \"1986-08-20\"}");
-        assertEquals(500, response2.getCod(), "Тест на отсутствии знака @ в  емейле");
+        assertEquals(400, response2.getCod(), "Тест на отсутствии знака @ в  емейле");
 
         ResponseClient response3 = UtilHttp.send("POST",
                 "http://localhost:8080/users",
                 "{\"login\": \"dolore\",\"name\": \"NickName\",\"birthday\": \"1986-08-20\"}");
-        assertEquals(500, response3.getCod(), "Тест на отсутствие емейла");
+        assertEquals(400, response3.getCod(), "Тест на отсутствие емейла");
 
         ResponseClient response4 = UtilHttp.send("POST",
                 "http://localhost:8080/users",
@@ -65,17 +65,17 @@ class FilmorateApplicationTests {
         ResponseClient response5 = UtilHttp.send("POST",
                 "http://localhost:8080/users",
                 "{\"name\": \"NickName\",\"email\": \"mail@mail.ru\",\"birthday\": \"1986-08-20\"}");
-        assertEquals(500, response5.getCod(), "Тест на пустой логин");
+        assertEquals(400, response5.getCod(), "Тест на пустой логин");
 
         ResponseClient response6 = UtilHttp.send("POST",
                 "http://localhost:8080/users",
                 "{\"login\": \"dolore\",\"name\": \"NickName\",\"email\": \"mail@mail.ru\"," +
                         "\"birthday\": \"2086-08-20\"}");
-        assertEquals(500, response6.getCod(), "Тест на дату рождения");
+        assertEquals(400, response6.getCod(), "Тест на дату рождения");
 
         ResponseClient response7 = UtilHttp.send("POST", "http://localhost:8080/users",
                 "{}");
-        assertEquals(500, response7.getCod(), "Тест на пустое тело запроса");
+        assertEquals(400, response7.getCod(), "Тест на пустое тело запроса");
     }
 
     @Test
@@ -98,11 +98,11 @@ class FilmorateApplicationTests {
         ResponseClient response2 = UtilHttp.send("PUT", "http://localhost:8080/users",
                 "{\"id\": \"1\", \"login\": \"dolore\",\"name\": \"NickName\",\"email\": \"mail.ru\"," +
                         "\"birthday\": \"1986-08-20\"}");
-        assertEquals(500, response2.getCod(), "Тест на отсутствии знака @ в  емейле");
+        assertEquals(400, response2.getCod(), "Тест на отсутствии знака @ в  емейле");
 
         ResponseClient response3 = UtilHttp.send("PUT", "http://localhost:8080/users",
                 "{\"id\": \"1\", \"login\": \"dolore\",\"name\": \"NickName\",\"birthday\": \"1986-08-20\"}");
-        assertEquals(500, response3.getCod(), "Тест на отсутствие емейла");
+        assertEquals(400, response3.getCod(), "Тест на отсутствие емейла");
 
         ResponseClient response4 = UtilHttp.send("PUT", "http://localhost:8080/users",
                 "{\"id\": \"1\", \"login\": \"dol ore\",\"name\": \"NickName\",\"email\": \"mail@mail.ru\"," +
@@ -112,16 +112,16 @@ class FilmorateApplicationTests {
         ResponseClient response5 = UtilHttp.send("PUT", "http://localhost:8080/users",
                 "{\"id\": \"1\", \"name\": \"NickName\",\"email\": \"mail@mail.ru\"," +
                         "\"birthday\": \"1986-08-20\"}");
-        assertEquals(500, response5.getCod(), "Тест на пустой логин");
+        assertEquals(400, response5.getCod(), "Тест на пустой логин");
 
         ResponseClient response6 = UtilHttp.send("PUT", "http://localhost:8080/users",
                 "{\"id\": \"1\", \"login\": \"dolore\",\"name\": \"NickName\",\"email\": \"mail@mail.ru\"," +
                         "\"birthday\": \"2086-08-20\"}");
-        assertEquals(500, response6.getCod(), "Тест на дату рождения");
+        assertEquals(400, response6.getCod(), "Тест на дату рождения");
 
         ResponseClient response7 = UtilHttp.send("PUT", "http://localhost:8080/users",
                 "{}");
-        assertEquals(500, response7.getCod(), "Тест на пустое тело запроса");
+        assertEquals(400, response7.getCod(), "Тест на пустое тело запроса");
     }
 
 
@@ -133,18 +133,18 @@ class FilmorateApplicationTests {
         assertEquals(200, response1.getCod(), "Фильм не добавлен.");
 
         ResponseClient response2 = UtilHttp.send("POST", "http://localhost:8080/films", "{}");
-        assertEquals(500, response2.getCod(), "Тест на пустое тело запроса");
+        assertEquals(400, response2.getCod(), "Тест на пустое тело запроса");
 
 
         ResponseClient response3 = UtilHttp.send("POST", "http://localhost:8080/films",
                 "{\"name\": \"\",\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1986-08-20\",\"duration\": \"200\"}");
-        assertEquals(500, response3.getCod(), "Тест на пустое название фильма.");
+        assertEquals(400, response3.getCod(), "Тест на пустое название фильма.");
 
         ResponseClient response4 = UtilHttp.send("POST", "http://localhost:8080/films",
                 "{\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1986-08-20\",\"duration\": \"200\"}");
-        assertEquals(500, response4.getCod(), "2й Тест на пустое название фильма.");
+        assertEquals(400, response4.getCod(), "2й Тест на пустое название фильма.");
 
         ResponseClient response5 = UtilHttp.send("POST", "http://localhost:8080/films",
                 "{\"name\": \"name Film\"," +
@@ -153,7 +153,7 @@ class FilmorateApplicationTests {
                         "который задолжал им деньги, а именно 20 миллионов. о Куглов, " +
                         "который за время «своего отсутствия», стал кандидатом Коломбани.\", " +
                         "\"releaseDate\": \"1986-08-20\",\"duration\": \"200\"}");
-        assertEquals(500, response5.getCod(), "Тест, где описание фильма больше 200 символов.");
+        assertEquals(400, response5.getCod(), "Тест, где описание фильма больше 200 символов.");
 
         ResponseClient response6 = UtilHttp.send("POST", "http://localhost:8080/films",
                 "{\"name\": \"name Film\",\"description\": \"description Film\", " +
@@ -163,7 +163,7 @@ class FilmorateApplicationTests {
         ResponseClient response7 = UtilHttp.send("POST", "http://localhost:8080/films",
                 "{\"name\": \"name Film\",\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1986-08-20\",\"duration\": \"-500\"}");
-        assertEquals(500, response7.getCod(), "Тест на продолжительность фильма.");
+        assertEquals(400, response7.getCod(), "Тест на продолжительность фильма.");
     }
 
     @Test
@@ -175,18 +175,18 @@ class FilmorateApplicationTests {
 
         ResponseClient response2 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{}");
-        assertEquals(500, response2.getCod(), "Тест на пустое тело запроса");
+        assertEquals(400, response2.getCod(), "Тест на пустое тело запроса");
 
 
         ResponseClient response3 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"id\": \"1\",\"name\": \"\",\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1986-08-20\",\"duration\": \"200\"}");
-        assertEquals(500, response3.getCod(), "Тест на пустое название фильма.");
+        assertEquals(400, response3.getCod(), "Тест на пустое название фильма.");
 
         ResponseClient response4 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"id\": \"1\",\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1986-08-20\",\"duration\": \"200\"}");
-        assertEquals(500, response4.getCod(), "2й Тест на пустое название фильма.");
+        assertEquals(400, response4.getCod(), "2й Тест на пустое название фильма.");
 
         ResponseClient response5 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"id\": \"1\",\"name\": \"name Film\"," +
@@ -195,7 +195,7 @@ class FilmorateApplicationTests {
                         "который задолжал им деньги, а именно 20 миллионов. о Куглов, " +
                         "который за время «своего отсутствия», стал кандидатом Коломбани.\", " +
                         "\"releaseDate\": \"1986-08-20\",\"duration\": \"200\"}");
-        assertEquals(500, response5.getCod(), "Тест, где описание фильма больше 200 символов.");
+        assertEquals(400, response5.getCod(), "Тест, где описание фильма больше 200 символов.");
 
         ResponseClient response6 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"id\": \"1\",\"name\": \"name Film\",\"description\": \"description Film\", " +
@@ -205,7 +205,7 @@ class FilmorateApplicationTests {
         ResponseClient response7 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"id\": \"1\",\"name\": \"name Film\",\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1986-08-20\",\"duration\": \"-500\"}");
-        assertEquals(500, response7.getCod(), "Тест на продолжительность фильма.");
+        assertEquals(400, response7.getCod(), "Тест на продолжительность фильма.");
 
         ResponseClient response8 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"name\": \"name Film\",\"description\": \"description Film\", " +

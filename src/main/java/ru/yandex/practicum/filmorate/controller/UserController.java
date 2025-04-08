@@ -1,31 +1,28 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.time.LocalDate;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private final Map<Long, User> users = new HashMap<>();
-    //Logger logger = LoggerFactory.getLogger(UserController.class);
 
     //GET /users — для получения списка пользователей.
     @GetMapping
-    public Collection<User> findAll() {
-        return users.values();
+    public List<User> findAll() {
+        return new ArrayList<>(users.values());
     }
 
     //POST /users — для добавления нового пользователя в список.
     @PostMapping
-    public User create(@RequestBody User user) {
+    public User create(@RequestBody @Valid User user) {
         validation(user);
         user.setId(getNextId());
         // сохраняем новую публикацию в памяти приложения
@@ -34,12 +31,12 @@ public class UserController {
     }
 
     @PutMapping
-    public User update(@RequestBody User newUser) {
+    public User update(@RequestBody @Valid User newUser) {
         // проверяем необходимые условия
+        log.warn("Id должен быть указан");
         if (newUser.getId() == null) {
             throw new ValidationException("Id должен быть указан");
         }
-
 
         if (!users.containsKey(newUser.getId())) {
             throw new ValidationException("Не могу обновить, такого Id пользователя не существует.");
@@ -63,23 +60,11 @@ public class UserController {
 
     private void validation(User user) {
         // проверяем выполнение необходимых условий
-        if (user.getEmail() == null || user.getEmail().isBlank()) {
-            log.debug("Лог - Емейл должен быть указан");
-            throw new ValidationException("Емейл должен быть указан");
-        }
-        if (user.getEmail().matches(".*@.*") == false) {
-            throw new ValidationException("Емейл должен содержать символ @  org:" + user.getEmail());
-        }
-        if (user.getLogin() == null || user.getLogin().matches(".*\\s.*")) {
+        if (user.getLogin().matches(".*\\s.*")) {
             throw new ValidationException("Логин не может быть пустым и содержать пробелы");
         }
-
         if (user.getName() == null) {
             user.setName(user.getLogin());
-        }
-
-        if (user.getBirthday().isAfter(LocalDate.now())) {
-            throw new ValidationException("Дата рождения не может быть в будущем");
         }
     }
 }
