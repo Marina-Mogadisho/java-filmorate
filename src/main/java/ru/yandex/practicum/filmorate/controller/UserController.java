@@ -47,7 +47,6 @@ public class UserController {
         return newUser;
     }
 
-
     // вспомогательный метод для генерации идентификатора нового пользователя
     private long getNextId() {
         long currentMaxId = users.keySet()

@@ -19,7 +19,6 @@ public class FilmController {
 
     private final Map<Long, Film> films = new HashMap<>();
     private final LocalDate movieInventDate = LocalDate.of(1895, DECEMBER, 20);
-    private static final String format = UtilData.format;
 
     @GetMapping
     public List<Film> findAll() {

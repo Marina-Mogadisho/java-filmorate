@@ -166,6 +166,7 @@ class FilmorateApplicationTests {
         assertEquals(400, response7.getCod(), "Тест на продолжительность фильма.");
     }
 
+
     @Test
     void filmControllerPUTTest() {
         ResponseClient response1 = UtilHttp.send("POST", "http://localhost:8080/films",

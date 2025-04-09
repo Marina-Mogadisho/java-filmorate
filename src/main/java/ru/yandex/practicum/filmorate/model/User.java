@@ -11,6 +11,7 @@ import java.time.LocalDate;
 
 @Data
 public class User {
+
     Long id;
 
     @NotBlank(message = "Емейл должен быть указан.")
