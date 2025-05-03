@@ -8,10 +8,10 @@ import jakarta.validation.constraints.Past;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 @Data
 public class User {
-
     Long id;
 
     @NotBlank(message = "Емейл должен быть указан.")
@@ -27,4 +27,6 @@ public class User {
     @NotNull(message = "Дата рождения не может пустой")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
     LocalDate birthday;
+
+    Set<Long> friends; // список id друзей
 }
