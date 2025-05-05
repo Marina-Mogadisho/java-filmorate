@@ -107,7 +107,7 @@ class FilmorateApplicationTests {
         ResponseClient response4 = UtilHttp.send("PUT", "http://localhost:8080/users",
                 "{\"id\": \"1\", \"login\": \"dol ore\",\"name\": \"NickName\",\"email\": \"mail@mail.ru\"," +
                         "\"birthday\": \"1986-08-20\"}");
-        assertEquals(500, response4.getCod(), "Тест на пробелы в логине");
+        assertEquals(400, response4.getCod(), "Тест на пробелы в логине");
 
         ResponseClient response5 = UtilHttp.send("PUT", "http://localhost:8080/users",
                 "{\"id\": \"1\", \"name\": \"NickName\",\"email\": \"mail@mail.ru\"," +
