@@ -201,7 +201,7 @@ class FilmorateApplicationTests {
         ResponseClient response6 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"id\": \"1\",\"name\": \"name Film\",\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1786-08-20\",\"duration\": \"200\"}");
-        assertEquals(500, response6.getCod(), "Тест на дату релиза.");
+        assertEquals(400, response6.getCod(), "Тест на дату релиза.");
 
         ResponseClient response7 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"id\": \"1\",\"name\": \"name Film\",\"description\": \"description Film\", " +

@@ -10,9 +10,9 @@ import java.util.Set;
 public interface FilmStorage {
     public List<Film> findAll();
 
-    public Film create(Film film);
+    public Film create(Film film) throws Throwable;
 
-    public Film update(Film newFilm);
+    public Film update(Film newFilm) throws Throwable;
 
     public Set<Long> getAllIdFilms();
 
