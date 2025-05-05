@@ -36,7 +36,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         l = l + 1;
         film.setLike(l);
         return film;
-
     }
 
     public Film deleteLike(Long idFilm) {
