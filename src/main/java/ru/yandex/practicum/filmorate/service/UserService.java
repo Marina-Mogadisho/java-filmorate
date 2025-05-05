@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
@@ -12,9 +13,11 @@ import java.util.List;
 import java.util.Set;
 
 //будет отвечать за такие операции с пользователями как:
+
 // добавление в друзья,
 // удаление из друзей,
 // вывод списка общих друзей.
+@Slf4j
 @Service //к ним можно будет получить доступ из контроллера.
 public class UserService {
     UserStorage userStorage;
@@ -49,15 +52,14 @@ public class UserService {
         validation(idFriend, idUser); // проверяем существуют ли такие пользователи
 
         User user = userStorage.getUser(idUser);
-        User friend = userStorage.getUser(idFriend);
         if (!user.getFriends().remove(idFriend)) {
-            throw new NotFoundException("Удаление невозможно. " +
+            log.trace("Удаление невозможно. " +
                     "Друга с id " + idFriend + " нет в списке друзей пользователя User " + idUser);
         }
-
         User newFriend = userStorage.getUser(idFriend);
+
         if (!newFriend.getFriends().remove(idUser)) {
-            throw new NotFoundException("Удаление невозможно. " +
+            log.trace("Удаление невозможно. " +
                     "У пользователя Friend " + idFriend + " нет друга User с id " + idUser);
         }
         return user;
