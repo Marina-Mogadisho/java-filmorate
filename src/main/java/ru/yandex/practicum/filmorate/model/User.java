@@ -8,6 +8,7 @@ import jakarta.validation.constraints.Past;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -28,5 +29,6 @@ public class User {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
     LocalDate birthday;
 
-    Set<Long> friends; // список id друзей
+    Set<Long> friends = new HashSet<>(); // список id друзей
+    Set<Long> film = new HashSet<>(); // список id фильмов, которым пользователь поставил лайк
 }

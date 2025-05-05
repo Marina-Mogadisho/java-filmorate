@@ -1,80 +1,83 @@
 package ru.yandex.practicum.filmorate.service;
 
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import ru.yandex.practicum.filmorate.exception.ValidationException;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-
-import static java.util.Calendar.DECEMBER;
+import java.util.Set;
 
 //будет отвечать за операции с фильмами —
-// добавление и удаление лайка, вывод 10
-// наиболее популярных фильмов по количеству лайков.
+// добавление и удаление лайка,
+// вывод 10 наиболее популярных фильмов по количеству лайков.
 @Service //к ним можно будет получить доступ из контроллера.
 public class FilmService {
-    private final Map<Long, Film> films = new HashMap<>();
-    private final LocalDate movieInventDate = LocalDate.of(1895, DECEMBER, 20);
 
-    //класс зависимость
+    UserStorage userStorage;
+    FilmStorage filmStorage;
+
     @Autowired
-    UserService userService;
-
-    //@GetMapping
-    public List<Film> findAll() {
-        return new ArrayList<>(films.values());
+    public FilmService(UserStorage userStorage, FilmStorage filmStorage) {
+        this.userStorage = userStorage;
+        this.filmStorage = filmStorage;
     }
 
-    // @PostMapping
-    public Film create(Film film) {
-        // проверяем выполнение необходимых условий
-        checkReleaseDate(film);
-        // формируем дополнительные данные
-        film.setId(getNextId());
-        // сохраняем новую публикацию в памяти приложения
-        films.put(film.getId(), film);
-        return film;
+    //PUT /films/{id}/like/{userId} — пользователь ставит лайк фильму.
+    public Film addLikeToFilm(Long idFilm, Long idUser) {
+        validation(idFilm, idUser);
+        Film film = filmStorage.getFilm(idFilm);
+        User user = userStorage.getUser(idUser);
+        // добавили id пользователя в список пользователей, которые поставили лайки этому фильму
+        film.getLikeUser().add(idUser);
+        // Добавили id фильма в список фильмов, которым пользователь поставил лайк
+        user.getFilm().add(idFilm);
+        return filmStorage.addLike(idFilm); // увеличили количество лайков фильма на 1 лайк
     }
 
-    // вспомогательный метод для генерации идентификатора нового фильма
-    private long getNextId() {
-        long currentMaxId = films.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    //DELETE /films/{id}/like/{userId} — пользователь удаляет лайк.
+    public Film deleteLikeToFilm(Long idFilm, Long idUser) {
+        validation(idFilm, idUser);
+        Film film = filmStorage.getFilm(idFilm);
+        User user = userStorage.getUser(idUser);
+        //удаляем id пользователя из списка пользователей, которые поставили лайки этому фильму
+        film.getLikeUser().remove(idUser);
+        // удаляем id фильма из списка фильмов, которым пользователь поставил лайк
+        user.getFilm().remove(idFilm);
+        return filmStorage.deleteLike(idFilm);// уменьшили количество лайков фильма на 1 лайк
     }
 
-
-    // @PutMapping
-    public Film update(Film newFilm) {
-        // проверяем необходимые условия
-        if (newFilm.getId() == null) {
-            throw new ValidationException("Id фильма должен быть указан");
+    //GET /films/popular?count={count} — возвращает список из первых count фильмов по количеству лайков.
+    // Если значение параметра count не задано, верните первые 10
+    public List<Film> getListFilmsPopular(Integer count) {
+        if (count == null) count = 10;
+        List<Film> listFilms = new ArrayList<>();
+        ArrayList<Film> listSort = new ArrayList<>(filmStorage.findAll()); // достали список фильмов
+        listSort.sort(new CompareFilm()); // Отсортировали фильмы в списке по большинству лайков
+        if (count > 0) {
+            if (count <= listSort.size()) {
+                listFilms = listSort.subList(0, count);
+            } else listFilms = listSort.subList(0, listSort.size());
+        } else {
+            throw new RuntimeException("error arg");
         }
-        if (!films.containsKey(newFilm.getId())) {
-            throw new ValidationException("Не могу обновить, такого Id фильма не существует.");
-        }
-        checkReleaseDate(newFilm);
-        films.put(newFilm.getId(), newFilm);
-        return newFilm;
+        return listFilms;
     }
 
-    private void checkReleaseDate(Film film) {
-        if (film.getReleaseDate().isBefore(movieInventDate)) {
-            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года");
+    //Вспомогательный метод, проверяем существуют ли пользователи с указанными в запросе id
+    private void validation(Long idFilm, Long idUser) {
+        Set<Long> setIdUsers = userStorage.getAllIdUsers();
+        Set<Long> setIdFilm = filmStorage.getAllIdFilms();
+
+        if (!setIdFilm.contains(idFilm)) {
+            throw new NotFoundException("Фильм с id = " + idFilm + " не найден.");
+        }
+        if (!setIdUsers.contains(idUser)) {
+            throw new NotFoundException("Пользователь с id =  " + idUser + " не найден.");
         }
     }
 }

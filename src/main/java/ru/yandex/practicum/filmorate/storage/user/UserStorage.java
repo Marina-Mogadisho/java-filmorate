@@ -17,8 +17,7 @@ public interface UserStorage {
 
     public void deleteUser(User user);
 
-    public User getUser (Long id);
+    public User getUser(Long id);
 
     public Set<Long> getAllIdUsers();
-
 }

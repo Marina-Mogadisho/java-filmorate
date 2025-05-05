@@ -17,7 +17,6 @@ public class UtilData {
         } catch (Exception e) {
             return null;
         }
-
     }
 
     public static Duration stringOfDuration(String duration) {
