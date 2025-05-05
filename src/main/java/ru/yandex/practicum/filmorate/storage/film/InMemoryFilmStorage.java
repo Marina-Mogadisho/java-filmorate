@@ -88,7 +88,7 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     private void checkReleaseDate(Film film) throws Throwable {
         if (film.getReleaseDate().isBefore(movieInventDate)) {
-            throw new ValidationException ("Дата релиза должна быть не раньше 28 декабря 1895 года");
+            throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года");
         }
     }
 }
