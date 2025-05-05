@@ -17,8 +17,4 @@ public interface FilmStorage {
     public Set<Long> getAllIdFilms();
 
     public Film getFilm(Long idFilm);
-
-    public Film addLike(Long idFilm);
-
-    public Film deleteLike(Long idFilm);
 }

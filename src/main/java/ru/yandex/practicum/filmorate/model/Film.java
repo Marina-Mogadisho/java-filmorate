@@ -31,5 +31,8 @@ public class Film {
     int duration;
 
     Set<Long> likeUser = new HashSet<>(); // Список id пользователей, которые поставили лайки этому фильму
-    Long like = 0L; // Количество лайков у этого фильма
+
+    public int getLike() {
+        return likeUser.size();
+    }
 }

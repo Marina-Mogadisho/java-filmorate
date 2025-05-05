@@ -30,22 +30,6 @@ public class InMemoryFilmStorage implements FilmStorage {
         return films.keySet();
     }
 
-    public Film addLike(Long idFilm) {
-        Film film = films.get(idFilm);
-        Long l = film.getLike();
-        l = l + 1;
-        film.setLike(l);
-        return film;
-    }
-
-    public Film deleteLike(Long idFilm) {
-        Film film = films.get(idFilm);
-        Long l = film.getLike();
-        l--;
-        film.setLike(l);
-        return film;
-    }
-
     // @PostMapping
     public Film create(Film film) {
         // проверяем выполнение необходимых условий
@@ -58,7 +42,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     // @PutMapping
-    public Film update(Film newFilm)  {
+    public Film update(Film newFilm) {
         // проверяем необходимые условия
         if (newFilm.getId() == null) {
             throw new ValidationException("Id фильма должен быть указан");

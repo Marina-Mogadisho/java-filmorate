@@ -1,6 +1,6 @@
 package ru.yandex.practicum.filmorate.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -8,24 +8,18 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.user.UserStorage;
 
-import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 
 //будет отвечать за операции с фильмами —
 // добавление и удаление лайка,
 // вывод 10 наиболее популярных фильмов по количеству лайков.
 @Service //к ним можно будет получить доступ из контроллера.
+@RequiredArgsConstructor
 public class FilmService {
 
-    UserStorage userStorage;
-    FilmStorage filmStorage;
-
-    @Autowired
-    public FilmService(UserStorage userStorage, FilmStorage filmStorage) {
-        this.userStorage = userStorage;
-        this.filmStorage = filmStorage;
-    }
+    final UserStorage userStorage;
+    final FilmStorage filmStorage;
 
     //PUT /films/{id}/like/{userId} — пользователь ставит лайк фильму.
     public Film addLikeToFilm(Long idFilm, Long idUser) {
@@ -36,7 +30,7 @@ public class FilmService {
         film.getLikeUser().add(idUser);
         // Добавили id фильма в список фильмов, которым пользователь поставил лайк
         user.getFilm().add(idFilm);
-        return filmStorage.addLike(idFilm); // увеличили количество лайков фильма на 1 лайк
+        return film; // увеличили количество лайков фильма на 1 лайк
     }
 
     //DELETE /films/{id}/like/{userId} — пользователь удаляет лайк.
@@ -48,35 +42,29 @@ public class FilmService {
         film.getLikeUser().remove(idUser);
         // удаляем id фильма из списка фильмов, которым пользователь поставил лайк
         user.getFilm().remove(idFilm);
-        return filmStorage.deleteLike(idFilm);// уменьшили количество лайков фильма на 1 лайк
+        return film;// уменьшили количество лайков фильма на 1 лайк
     }
 
     //GET /films/popular?count={count} — возвращает список из первых count фильмов по количеству лайков.
     // Если значение параметра count не задано, верните первые 10
     public List<Film> getListFilmsPopular(Integer count) {
-        if (count == null) count = 10;
-        List<Film> listFilms = new ArrayList<>();
-        ArrayList<Film> listSort = new ArrayList<>(filmStorage.findAll()); // достали список фильмов
-        listSort.sort(new CompareFilm()); // Отсортировали фильмы в списке по большинству лайков
-        if (count > 0) {
-            if (count <= listSort.size()) {
-                listFilms = listSort.subList(0, count);
-            } else listFilms = listSort.subList(0, listSort.size());
-        } else {
-            throw new RuntimeException("error arg");
-        }
+        List<Film> listFilms;
+        List<Film> listSort = filmStorage.findAll();
+        listSort.sort(Comparator.comparing(Film::getLike).reversed());
+        if (count <= listSort.size()) {
+            listFilms = listSort.subList(0, count);
+        } else listFilms = listSort.subList(0, listSort.size());
         return listFilms;
     }
 
     //Вспомогательный метод, проверяем существуют ли пользователи с указанными в запросе id
     private void validation(Long idFilm, Long idUser) {
-        Set<Long> setIdUsers = userStorage.getAllIdUsers();
-        Set<Long> setIdFilm = filmStorage.getAllIdFilms();
-
-        if (!setIdFilm.contains(idFilm)) {
+        User user = userStorage.getUser(idUser);
+        Film film = filmStorage.getFilm(idFilm);
+        if (film == null) {
             throw new NotFoundException("Фильм с id = " + idFilm + " не найден.");
         }
-        if (!setIdUsers.contains(idUser)) {
+        if (user == null) {
             throw new NotFoundException("Пользователь с id =  " + idUser + " не найден.");
         }
     }

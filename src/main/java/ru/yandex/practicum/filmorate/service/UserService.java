@@ -1,7 +1,7 @@
 package ru.yandex.practicum.filmorate.service;
 
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
@@ -19,21 +19,16 @@ import java.util.Set;
 // вывод списка общих друзей.
 @Slf4j
 @Service //к ним можно будет получить доступ из контроллера.
+@RequiredArgsConstructor // то же самое, если использовать конструктор с @Autowired
 public class UserService {
-    UserStorage userStorage;
+    final UserStorage userStorage;
 
-    @Autowired
-    public UserService(UserStorage userStorage) {
-        this.userStorage = userStorage;
-
-    }
 
     //Метод добавления Friend в список друзей пользователя user
     // PUT /users/{id}/friends/{friendId}
     public User addFriends(Long idUser, Long idFriend) {
         validation(idFriend, idUser); // проверяем существуют ли такие пользователи
         User user = userStorage.getUser(idUser);
-        User friend = userStorage.getUser(idFriend);
         Set<Long> b = user.getFriends(); // Достали список id друзей типа Set, т.е. без повторений
         boolean a = b.add(idFriend); // Если такого id нет в списке, то он добавился в список друзей, и переменная а=true
         if (!a) {
@@ -68,7 +63,7 @@ public class UserService {
     // Метод — возвращаем список друзей пользователя User
     //GET /users/{id}/friends
     public List<User> getAllFriends(Long idUser) {
-        if (!userStorage.getAllIdUsers().contains(idUser)) {
+        if (userStorage.getUser(idUser) == null) {
             throw new NotFoundException("Пользователь с id =  " + idUser + " не найден.");
         }
         ArrayList<User> listFriends = new ArrayList<>();
@@ -105,6 +100,9 @@ public class UserService {
     //Вспомогательный метод, проверяем существуют ли пользователи с указанными в запросе id
     private void validation(Long idFriend, Long idUser) {
         Set<Long> setIdUsers = userStorage.getAllIdUsers();
+        if (idUser == idFriend) {
+            throw new ValidationException("ID пользователей не могут быть одинаковыми.");
+        }
         if (!setIdUsers.contains(idFriend)) {
             throw new NotFoundException("Пользователь Friend с id = " + idFriend + " не найден.");
         }
