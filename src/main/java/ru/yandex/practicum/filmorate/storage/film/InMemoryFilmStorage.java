@@ -47,7 +47,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     // @PostMapping
-    public Film create(Film film) throws Throwable {
+    public Film create(Film film) {
         // проверяем выполнение необходимых условий
         checkReleaseDate(film);
         // формируем дополнительные данные
@@ -58,7 +58,7 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     // @PutMapping
-    public Film update(Film newFilm) throws Throwable {
+    public Film update(Film newFilm)  {
         // проверяем необходимые условия
         if (newFilm.getId() == null) {
             throw new ValidationException("Id фильма должен быть указан");
@@ -85,7 +85,7 @@ public class InMemoryFilmStorage implements FilmStorage {
         return ++currentMaxId;
     }
 
-    private void checkReleaseDate(Film film) throws Throwable {
+    private void checkReleaseDate(Film film) {
         if (film.getReleaseDate().isBefore(movieInventDate)) {
             throw new ValidationException("Дата релиза должна быть не раньше 28 декабря 1895 года");
         }
