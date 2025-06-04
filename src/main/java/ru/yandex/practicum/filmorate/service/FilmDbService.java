@@ -108,13 +108,13 @@ public class FilmDbService {
                         " and f.id =ff.f_id" +
                         " order by ff.like_count desc ";
 
-        List<Film> list_films;
+        List<Film> filmList;
         try {
-            list_films = jdbcTemplate.query(sqlQuery, filmRowMapper, count);
+            filmList = jdbcTemplate.query(sqlQuery, filmRowMapper, count);
         } catch (Exception e) {
             throw new NotFoundException("ERROR !!!!!!!!!!!\n" + e);
         }
-        return list_films;
+        return filmList;
     }
 
 
