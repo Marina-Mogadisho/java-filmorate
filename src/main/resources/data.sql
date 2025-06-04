@@ -23,11 +23,11 @@ insert into genre (genre_id, genre_name)
                         (6, 'Боевик')
                         ;
 
---INSERT INTO users (name, email, login, birthday)
---VALUES ('Marina', 'mar@mail.com', 'mar', '2000-12-15');
+INSERT INTO users (name, email, login, birthday)
+VALUES ('Marina', 'mar@mail.com', 'mar', '2000-12-15');
 
---NSERT INTO films (title, description, release_date, duration, mpa_id)
---VALUES ('Titanic', 'Love', '1998-03-01', '120', 1);
+NSERT INTO films (title, description, release_date, duration, mpa_id)
+VALUES ('Titanic', 'Love', '1998-03-01', '120', 1);
 
 
 
