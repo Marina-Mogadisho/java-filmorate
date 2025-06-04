@@ -60,7 +60,7 @@ class FilmorateApplicationTests {
                 "http://localhost:8080/users",
                 "{\"login\": \"dol ore\",\"name\": \"NickName\",\"email\": \"mail@mail.ru\"," +
                         "\"birthday\": \"1986-08-20\"}");
-        assertEquals(500, response4.getCod(), "Тест на пробелы в логине");
+        assertEquals(400, response4.getCod(), "Тест на пробелы в логине");
 
         ResponseClient response5 = UtilHttp.send("POST",
                 "http://localhost:8080/users",
@@ -93,7 +93,7 @@ class FilmorateApplicationTests {
         ResponseClient response9 = UtilHttp.send("PUT", "http://localhost:8080/users",
                 "{\"login\": \"NEWlogin\",\"name\": \"New Name\",\"email\": \"NEWmail@mail.ru\"," +
                         "\"birthday\": \"1986-01-01\"}");
-        assertEquals(500, response9.getCod(), "Тест на отсутствие ID при обновлении.");
+        assertEquals(404, response9.getCod(), "Тест на отсутствие ID при обновлении.");
 
         ResponseClient response2 = UtilHttp.send("PUT", "http://localhost:8080/users",
                 "{\"id\": \"1\", \"login\": \"dolore\",\"name\": \"NickName\",\"email\": \"mail.ru\"," +
@@ -107,7 +107,7 @@ class FilmorateApplicationTests {
         ResponseClient response4 = UtilHttp.send("PUT", "http://localhost:8080/users",
                 "{\"id\": \"1\", \"login\": \"dol ore\",\"name\": \"NickName\",\"email\": \"mail@mail.ru\"," +
                         "\"birthday\": \"1986-08-20\"}");
-        assertEquals(500, response4.getCod(), "Тест на пробелы в логине");
+        assertEquals(400, response4.getCod(), "Тест на пробелы в логине");
 
         ResponseClient response5 = UtilHttp.send("PUT", "http://localhost:8080/users",
                 "{\"id\": \"1\", \"name\": \"NickName\",\"email\": \"mail@mail.ru\"," +
@@ -158,7 +158,7 @@ class FilmorateApplicationTests {
         ResponseClient response6 = UtilHttp.send("POST", "http://localhost:8080/films",
                 "{\"name\": \"name Film\",\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1786-08-20\",\"duration\": \"200\"}");
-        assertEquals(500, response6.getCod(), "Тест на дату релиза.");
+        assertEquals(400, response6.getCod(), "Тест на дату релиза.");
 
         ResponseClient response7 = UtilHttp.send("POST", "http://localhost:8080/films",
                 "{\"name\": \"name Film\",\"description\": \"description Film\", " +
@@ -201,7 +201,7 @@ class FilmorateApplicationTests {
         ResponseClient response6 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"id\": \"1\",\"name\": \"name Film\",\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1786-08-20\",\"duration\": \"200\"}");
-        assertEquals(500, response6.getCod(), "Тест на дату релиза.");
+        assertEquals(400, response6.getCod(), "Тест на дату релиза.");
 
         ResponseClient response7 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"id\": \"1\",\"name\": \"name Film\",\"description\": \"description Film\", " +
@@ -211,7 +211,7 @@ class FilmorateApplicationTests {
         ResponseClient response8 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"name\": \"name Film\",\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1986-08-20\",\"duration\": \"500\"}");
-        assertEquals(500, response8.getCod(), "Тест на отсутствие ID при обновлении.");
+        assertEquals(400, response8.getCod(), "Тест на отсутствие ID при обновлении.");
 
         ResponseClient response9 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"id\": \"1\",\"name\": \"new name Film\",\"description\": \" new description Film\", " +

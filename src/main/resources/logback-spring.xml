@@ -7,7 +7,7 @@
 		</encoder>
 	</appender>
 
-	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+	<appender name="appFILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 		<file>app.log</file>
 		<rollingPolicy
 			class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
@@ -29,7 +29,7 @@
     
 	<root level="info">
 		<!-- <appender-ref ref="STDOUT" /> -->
-		<appender-ref ref="FILE" />
+		<appender-ref ref="appFILE" />
 	</root>
 
 	<springProfile name="dev">

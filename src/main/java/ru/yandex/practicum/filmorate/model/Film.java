@@ -1,10 +1,14 @@
 package ru.yandex.practicum.filmorate.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import jakarta.validation.constraints.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Film.
@@ -25,4 +29,10 @@ public class Film {
 
     @Positive(message = "Продолжительность фильма должна быть положительным числом")
     int duration;
+
+    Set<Long> likeUser = new HashSet<>(); // Список id пользователей, которые поставили лайки этому фильму
+
+    public int getLike() {
+        return likeUser.size();
+    }
 }
