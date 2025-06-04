@@ -34,19 +34,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @AutoConfigureTestDatabase //перед запуском теста необходимо сконфигурировать тестовую БД вместо основной
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Import
-        (
-                {
-                        UserDbStorage.class,
-                        FilmDbStorage.class,
-                        FilmDbService.class,
-                        UserRowMapper.class,
-                        FilmRowMapper.class,
-                        GenreRowMapper.class,
-                        MpaRowMapper.class
-                }
-        )
-
-
+        ({UserDbStorage.class,
+                FilmDbStorage.class,
+                FilmDbService.class,
+                UserRowMapper.class,
+                FilmRowMapper.class,
+                GenreRowMapper.class,
+                MpaRowMapper.class})
 class FilmorateApplicationTests {
     private final UserDbStorage userDbStorage;
     private final FilmDbStorage filmDbStorage;
