@@ -8,6 +8,6 @@ public class Friendship {
     Второй если подтвердит, то будет еще одна строка, гдк уже он будет первым user_id
      */
 
-    Long user_id;
-    Long friend_id;
+    Long userId;
+    Long friendId;
 }
