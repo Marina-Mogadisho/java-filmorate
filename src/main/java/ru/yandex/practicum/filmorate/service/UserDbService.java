@@ -64,12 +64,12 @@ public class UserDbService {
 
     // Метод удаления друга Friend из списка друзей пользователя User
 //DELETE /users/{id}/friends/{friendId}
-    public Optional<User> deleteFriend(Long user_id, Long friend_id) {
-        validation(user_id, friend_id); // проверяем существуют ли такие пользователи
+    public Optional<User> deleteFriend(Long userId, Long friendId) {
+        validation(userId, friendId); // проверяем существуют ли такие пользователи
         //проверяем являются ли пользователи друзьями
-        if (!friendsTrue(user_id, friend_id)) {
-            throw new ValidationException("Пользователь с id " + friend_id +
-                    " не в списке друзей пользователя с id " + user_id);
+        if (!friendsTrue(userId, friendId)) {
+            throw new ValidationException("Пользователь с id " + friendId +
+                    " не в списке друзей пользователя с id " + userId);
         }
 
         // 1 ШАГ : Удаляем строку из Таблицы friendship Базы данных
@@ -79,8 +79,8 @@ public class UserDbService {
         int updatedRows = jdbcTemplate.update(connection -> {
             // препарируем запрос, чтобы можно было вставить туда аргументы
             PreparedStatement stmt = connection.prepareStatement(sqlQuery);
-            stmt.setLong(1, user_id); // в запрос подставляем переменную id, которая будет в строке запроса
-            stmt.setLong(2, friend_id); // в запрос подставляем переменную id, которая будет в строке запроса
+            stmt.setLong(1, userId); // в запрос подставляем переменную id, которая будет в строке запроса
+            stmt.setLong(2, friendId); // в запрос подставляем переменную id, которая будет в строке запроса
             return stmt;
         });
         // Обработка ситуации, когда обновление не произошло
@@ -88,11 +88,11 @@ public class UserDbService {
             throw new ValidationException("Удаление не произошло.");
         }
 
-        //2 ШАГ : Удаляем из Set<Long> friends позьзователя с id user_id
-        Optional<User> user = userDbStorage.getUser(user_id);
-        if (!user.get().getFriends().remove(friend_id)) {
+        //2 ШАГ : Удаляем из Set<Long> friends пользователя с id userId
+        Optional<User> user = userDbStorage.getUser(userId);
+        if (!user.get().getFriends().remove(friendId)) {
             log.trace("Удаление невозможно. " +
-                    "Друга с id " + friend_id + " нет в списке друзей пользователя User " + user_id);
+                    "Друга с id " + friendId + " нет в списке друзей пользователя User " + userId);
         }
         return user;
     }
@@ -100,10 +100,10 @@ public class UserDbService {
 
     // Метод — возвращаем список друзей пользователя User
 //GET /users/{id}/friends
-    public List<User> getAllFriends(Long user_id) {
-        if (user_id <= 0) throw new ValidationException("id должно быть положительным числом и больше 0.");
+    public List<User> getAllFriends(Long userId) {
+        if (userId <= 0) throw new ValidationException("id должно быть положительным числом и больше 0.");
         String sqlQuery = "SELECT COUNT(*) FROM users WHERE id = ?";
-        Integer count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, user_id);
+        Integer count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, userId);
         if (count == 0) {
             throw new NotFoundException("Пользователь с таким ID не существует.");
         }
@@ -112,7 +112,7 @@ public class UserDbService {
                         "FROM users AS u " +
                         "INNER JOIN friendships AS fs ON u.id = fs.friend_id " +
                         "WHERE fs.user_id = ?";
-        List<User> a = jdbcTemplate.query(sqlQuery2, new Object[]{user_id}, (rs, rowNum) -> {
+        List<User> a = jdbcTemplate.query(sqlQuery2, new Object[]{userId}, (rs, rowNum) -> {
             User user = new User();
             user.setId(rs.getLong("id"));
             user.setName(rs.getString("name_friend"));
@@ -146,9 +146,9 @@ public class UserDbService {
     }
 
     //Вспомогательный метод, проверяем являются ли пользователи друзьями
-    public boolean friendsTrue(Long user_id, Long friend_id) {
+    public boolean friendsTrue(Long userId, Long friendId) {
         String sqlQuery = "SELECT COUNT(*) FROM friendships WHERE user_id = ? AND friend_id = ?";
-        Integer count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, user_id, friend_id);
+        Integer count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, userId, friendId);
         return count >= 0;
     }
 

@@ -39,16 +39,16 @@ public class FilmDbService {
 
 
     //PUT /films/{id}/like/{userId} — пользователь ставит лайк фильму.
-    public Optional<Film> addLikeToFilm(Long film_id, Long user_id) {
-        validation(user_id, film_id);
-        Optional<Film> film = filmDBStorage.getFilmByID(film_id);
-        Optional<User> user = userDBStorage.getUser(user_id);
+    public Optional<Film> addLikeToFilm(Long filmId, Long userId) {
+        validation(userId, filmId);
+        Optional<Film> film = filmDBStorage.getFilmByID(filmId);
+        Optional<User> user = userDBStorage.getUser(userId);
 
         String sql = "INSERT INTO like_film (user_id, film_id) VALUES (?, ?)";
         int createRows = jdbcTemplate.update(connection -> {
             PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setLong(1, user_id);
-            stmt.setLong(2, film_id);
+            stmt.setLong(1, userId);
+            stmt.setLong(2, filmId);
             return stmt;
         });
         if (createRows <= 0) {
@@ -56,16 +56,16 @@ public class FilmDbService {
             throw new ValidationException("Не удалось добавить в базу like_film новую связь о дружбе.");
         }
         // добавили id пользователя в список пользователей, которые поставили лайки этому фильму
-        film.get().getLikeUser().add(user_id);
+        film.get().getLikeUser().add(userId);
         // Добавили id фильма в список фильмов, которым пользователь поставил лайк
-        user.get().getFilm().add(film_id);
+        user.get().getFilm().add(filmId);
         return film; // увеличили количество лайков фильма на 1 лайк
     }
 
 
     //DELETE /films/{id}/like/{userId} — пользователь удаляет лайк.
-    public Optional<Film> deleteLikeToFilm(Long film_id, Long user_id) {
-        validation(user_id, film_id);
+    public Optional<Film> deleteLikeToFilm(Long filmId, Long userId) {
+        validation(userId, filmId);
 
         //Удаляем строку из Таблицы like_film Базы данных
         String sqlQuery = "DELETE FROM like_film WHERE user_id = ? and film_id = ?";
@@ -75,8 +75,8 @@ public class FilmDbService {
             int updatedRows = jdbcTemplate.update(connection -> {
                 // препарируем запрос, чтобы можно было вставить туда аргументы
                 PreparedStatement stmt = connection.prepareStatement(sqlQuery);
-                stmt.setLong(1, user_id); // в запрос подставляем переменную id, которая будет в строке запроса
-                stmt.setLong(2, film_id); // в запрос подставляем переменную id, которая будет в строке запроса
+                stmt.setLong(1, userId); // в запрос подставляем переменную id, которая будет в строке запроса
+                stmt.setLong(2, filmId); // в запрос подставляем переменную id, которая будет в строке запроса
                 return stmt;
             });
             // Обработка ситуации, когда обновление не произошло
@@ -86,7 +86,7 @@ public class FilmDbService {
         } catch (Exception e) {
             throw new NotFoundException("ex:" + e);
         }
-        return filmDBStorage.getFilmByID(film_id);// уменьшили количество лайков фильма на 1 лайк
+        return filmDBStorage.getFilmByID(filmId);// уменьшили количество лайков фильма на 1 лайк
     }
 
 
@@ -119,14 +119,14 @@ public class FilmDbService {
 
 
     //Вспомогательный метод, проверяем существуют ли пользователи с указанными в запросе id
-    private void validation(Long user_id, Long film_id) {
-        Optional<User> user = userDBStorage.getUser(user_id);
-        Optional<Film> film = filmDBStorage.getFilmByID(film_id);
+    private void validation(Long userId, Long filmId) {
+        Optional<User> user = userDBStorage.getUser(userId);
+        Optional<Film> film = filmDBStorage.getFilmByID(filmId);
         if (film.isEmpty()) {
-            throw new NotFoundException("Фильм с id = " + film_id + " не найден.");
+            throw new NotFoundException("Фильм с id = " + filmId + " не найден.");
         }
         if (user.isEmpty()) {
-            throw new NotFoundException("Пользователь с id =  " + user_id + " не найден.");
+            throw new NotFoundException("Пользователь с id =  " + userId + " не найден.");
         }
     }
 
