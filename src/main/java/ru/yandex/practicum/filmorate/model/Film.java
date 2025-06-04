@@ -30,9 +30,13 @@ public class Film {
     @Positive(message = "Продолжительность фильма должна быть положительным числом")
     int duration;
 
+    private MPA mpa;
+
+    private Set<Genre> genres;
+
     Set<Long> likeUser = new HashSet<>(); // Список id пользователей, которые поставили лайки этому фильму
 
-    public int getLike() {
+    public int getLikeSize() {
         return likeUser.size();
     }
 }

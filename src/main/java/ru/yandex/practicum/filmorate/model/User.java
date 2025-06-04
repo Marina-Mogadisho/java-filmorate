@@ -15,19 +15,19 @@ import java.util.Set;
 public class User {
     Long id;
 
-    @NotBlank(message = "Емейл должен быть указан.")
-    @Email(message = "Емейл должен быть указан.")
-    String email;
+    String name;
 
     @NotBlank(message = "Логин не может быть пустым.")
     String login;
-
-    String name;
 
     @Past(message = "Дата рождения не может быть в будущем")
     @NotNull(message = "Дата рождения не может пустой")
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone = "UTC")
     LocalDate birthday;
+
+    @NotBlank(message = "Емейл должен быть указан.")
+    @Email(message = "Емейл должен быть указан.")
+    String email;
 
     Set<Long> friends = new HashSet<>(); // список id друзей
     Set<Long> film = new HashSet<>(); // список id фильмов, которым пользователь поставил лайк

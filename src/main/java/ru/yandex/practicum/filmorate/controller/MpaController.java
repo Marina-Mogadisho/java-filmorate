@@ -1,0 +1,45 @@
+package ru.yandex.practicum.filmorate.controller;
+
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.service.FilmDbService;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
+
+import java.util.List;
+import java.util.Optional;
+
+@Validated
+@Slf4j
+@RestController
+@RequestMapping("/mpa")
+
+public class MpaController {
+    FilmDbService filmDbService;
+    FilmDbStorage filmDbStorage;
+
+
+    @Autowired
+    public MpaController(FilmDbService filmDbService, FilmDbStorage filmDbStorage) {
+        this.filmDbService = filmDbService;
+        this.filmDbStorage = filmDbStorage;
+    }
+
+    @GetMapping
+    public List<MPA> findAll() {
+        return filmDbService.getAllMpas();
+    }
+
+    //Get /mpa/{userId} — пользователь ставит лайк фильму.
+    @GetMapping("/{mpaId}")
+    public Optional<MPA> getMpa(@PathVariable Long mpaId) {
+        return filmDbService.getMpa(mpaId);
+    }
+}
+
+

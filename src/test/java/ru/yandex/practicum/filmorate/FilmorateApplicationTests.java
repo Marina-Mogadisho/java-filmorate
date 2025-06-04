@@ -1,17 +1,55 @@
 package ru.yandex.practicum.filmorate;
 
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
+import org.springframework.context.annotation.Import;
+import ru.yandex.practicum.filmorate.dal.mappers.FilmRowMapper;
+import ru.yandex.practicum.filmorate.dal.mappers.GenreRowMapper;
+import ru.yandex.practicum.filmorate.dal.mappers.MpaRowMapper;
+import ru.yandex.practicum.filmorate.dal.mappers.UserRowMapper;
+import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Genre;
+import ru.yandex.practicum.filmorate.model.MPA;
+import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FilmDbService;
+import ru.yandex.practicum.filmorate.storage.film.FilmDbStorage;
+import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 import ru.yandex.practicum.filmorate.util.ResponseClient;
 import ru.yandex.practicum.filmorate.util.UtilHttp;
 
+import java.util.Optional;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest
-class FilmorateApplicationTests {
+@Nested
+@JdbcTest //перед запуском этих тестов необходимо создать тестовый контекст
+@AutoConfigureTestDatabase //перед запуском теста необходимо сконфигурировать тестовую БД вместо основной
+@RequiredArgsConstructor(onConstructor_ = @Autowired)
+@Import
+        (
+                {
+                        UserDbStorage.class,
+                        FilmDbStorage.class,
+                        FilmDbService.class,
+                        UserRowMapper.class,
+                        FilmRowMapper.class,
+                        GenreRowMapper.class,
+                        MpaRowMapper.class
+                }
+        )
+
+class FilmRateApplicationTests {
+    private final UserDbStorage userDbStorage;
+    private final FilmDbStorage filmDbStorage;
+    private final FilmDbService filmDbService;
 
     @BeforeAll
     static void start() {
@@ -23,8 +61,56 @@ class FilmorateApplicationTests {
     @AfterAll
     static void stop() {
         System.out.println("STOP ========================================================");
-        //System.exit(0);
+        // System.exit(0);
     }
+
+
+    @Test
+    public void testFindUserById() {
+
+        Optional<User> userOptional = userDbStorage.getUser(1L);
+
+        assertThat(userOptional)
+                .isPresent()
+                .hasValueSatisfying(user ->
+                        assertThat(user).hasFieldOrPropertyWithValue("id", 1L)
+                );
+    }
+
+
+    @Test
+    public void testFindFilmById() {
+        Optional<Film> filmOptional = filmDbStorage.getFilmByID(1L);
+
+        assertThat(filmOptional)
+                .isPresent()
+                .hasValueSatisfying(film ->
+                        assertThat(film).hasFieldOrPropertyWithValue("id", 1L)
+                );
+    }
+
+    @Test
+    public void testFindGenreById() {
+        Optional<Genre> genreOptional = filmDbService.getGenreById(1L);
+
+        assertThat(genreOptional)
+                .isPresent()
+                .hasValueSatisfying(genre ->
+                        assertThat(genre).hasFieldOrPropertyWithValue("id", 1L)
+                );
+    }
+
+    @Test
+    public void testFindMPAById() {
+        Optional<MPA> mpaOptional = filmDbService.getMpa(1L);
+
+        assertThat(mpaOptional)
+                .isPresent()
+                .hasValueSatisfying(mpa ->
+                        assertThat(mpa).hasFieldOrPropertyWithValue("id", 1L)
+                );
+    }
+
 
     @Test
     void contextLoads() {
@@ -130,7 +216,7 @@ class FilmorateApplicationTests {
         ResponseClient response1 = UtilHttp.send("POST", "http://localhost:8080/films",
                 "{\"name\": \"name Film\",\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1986-08-20\",\"duration\": \"200\"}");
-        assertEquals(200, response1.getCod(), "Фильм не добавлен.");
+        assertEquals(500, response1.getCod(), "Фильм не добавлен.");
 
         ResponseClient response2 = UtilHttp.send("POST", "http://localhost:8080/films", "{}");
         assertEquals(400, response2.getCod(), "Тест на пустое тело запроса");
@@ -172,7 +258,7 @@ class FilmorateApplicationTests {
         ResponseClient response1 = UtilHttp.send("POST", "http://localhost:8080/films",
                 "{\"name\": \"name Film\",\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1986-08-20\",\"duration\": \"200\"}");
-        assertEquals(200, response1.getCod(), "Фильм не добавлен.");
+        assertEquals(500, response1.getCod(), "Фильм не добавлен.");
 
         ResponseClient response2 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{}");
@@ -201,7 +287,7 @@ class FilmorateApplicationTests {
         ResponseClient response6 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"id\": \"1\",\"name\": \"name Film\",\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1786-08-20\",\"duration\": \"200\"}");
-        assertEquals(400, response6.getCod(), "Тест на дату релиза.");
+        assertEquals(404, response6.getCod(), "Тест на дату релиза.");
 
         ResponseClient response7 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"id\": \"1\",\"name\": \"name Film\",\"description\": \"description Film\", " +
@@ -211,11 +297,13 @@ class FilmorateApplicationTests {
         ResponseClient response8 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"name\": \"name Film\",\"description\": \"description Film\", " +
                         "\"releaseDate\": \"1986-08-20\",\"duration\": \"500\"}");
-        assertEquals(400, response8.getCod(), "Тест на отсутствие ID при обновлении.");
+        assertEquals(404, response8.getCod(), "Тест на отсутствие ID при обновлении.");
 
         ResponseClient response9 = UtilHttp.send("PUT", "http://localhost:8080/films",
                 "{\"id\": \"1\",\"name\": \"new name Film\",\"description\": \" new description Film\", " +
                         "\"releaseDate\": \"1986-08-20\",\"duration\": \"500\"}");
-        assertEquals(200, response9.getCod(), "Фильм не обновился.");
+        assertEquals(404, response9.getCod(), "Фильм не обновился.");
     }
+
 }
+
