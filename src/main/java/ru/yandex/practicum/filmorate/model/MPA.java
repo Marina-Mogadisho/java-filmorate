@@ -11,9 +11,9 @@ public class MPA {
     @NotBlank(message = "Название рейтинга не может быть пустым.")
     String name;
 
-    public MPA(long mpa_id, String mpa_name) {
-        this.id = mpa_id;
-        this.name = mpa_name;
+    public MPA(long mpaId, String mpaName) {
+        this.id = mpaId;
+        this.name = mpaName;
     }
 
     public MPA() {
