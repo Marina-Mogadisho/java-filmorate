@@ -4,7 +4,7 @@ import lombok.Data;
 
 //СВязь: один фильм ко многим (лайкам)
 @Data
-public class Like_Film {
+public class likeFilm {
     Long film_id;
     Long user_id;
 }
