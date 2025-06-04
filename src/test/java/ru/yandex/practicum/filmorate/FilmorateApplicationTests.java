@@ -46,6 +46,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
                 }
         )
 
+
 class FilmRateApplicationTests {
     private final UserDbStorage userDbStorage;
     private final FilmDbStorage filmDbStorage;
