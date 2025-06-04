@@ -73,12 +73,12 @@ public class FilmDbStorage implements FilmStorage {
         return film;
     }
 
-    private void filmAddGenres(Long film_id, Long genre_id) {
+    private void filmAddGenres(Long filmId, Long genreId) {
         String sqlQuery = "INSERT INTO film_genre (film_id, genre_id) VALUES(?,?)";
         try {
-            int a = jdbcTemplate.update(sqlQuery, film_id, genre_id);
+            int a = jdbcTemplate.update(sqlQuery, filmId, genreId);
         } catch (Exception e) {
-            throw new NotFoundException("Жанра с id " + genre_id + " не существует.");
+            throw new NotFoundException("Жанра с id " + genreId + " не существует.");
         }
     }
 
@@ -109,9 +109,9 @@ public class FilmDbStorage implements FilmStorage {
 
     //@DeleteMapping
     @Override
-    public void deleteFilm(Long film_id) {
+    public void deleteFilm(Long filmId) {
         // проверяем выполнение необходимых условий
-        if (film_id <= 0) {
+        if (filmId <= 0) {
             throw new ValidationException("Необходимо указать id фильма, который нужно удалить.");
         }
         String sqlQuery = "DELETE FROM films WHERE id = ?";
@@ -120,7 +120,7 @@ public class FilmDbStorage implements FilmStorage {
         int deleteRow = jdbcTemplate.update(connection -> {
             // препарируем запрос, чтобы можно было вставить туда аргументы
             PreparedStatement stmt = connection.prepareStatement(sqlQuery);
-            stmt.setLong(1, film_id); // в запрос подставляем переменную id, которая будет в строке запроса
+            stmt.setLong(1, filmId); // в запрос подставляем переменную id, которая будет в строке запроса
             return stmt;
         });
         if (deleteRow <= 0) log.trace("Не удалось удалить фильм из базы данных.");
@@ -162,12 +162,12 @@ public class FilmDbStorage implements FilmStorage {
     //GET/films/{id}
     //@GetMapping("{id}")   - выводим фильм по его id
     @Override
-    public Optional<Film> getFilmByID(Long film_id) {
+    public Optional<Film> getFilmByID(Long filmId) {
 // проверяем выполнение необходимых условий
-        if (film_id <= 0) {
+        if (filmId <= 0) {
             throw new ValidationException("Необходимо указать id фильма.");
         }
-        log.trace("Выполнение запроса  film_id: " + film_id);
+        log.trace("Выполнение запроса  film_id: " + filmId);
         String sqlQuery =
                 "SELECT f.id, f.title, f.description, f.release_date, f.duration, m.mpa_id, m.mpa_name " +
                         "FROM films AS f " +
@@ -177,19 +177,19 @@ public class FilmDbStorage implements FilmStorage {
         try {
             //RowMapper<Film> используется для преобразования каждой строки результата SQL-запроса в объект типа Film
             // Метод jdbcTemplate.queryForObject для вывода одного объекта, одной строки
-            Film getFilm = jdbcTemplate.queryForObject(sqlQuery, mapper, film_id);
+            Film getFilm = jdbcTemplate.queryForObject(sqlQuery, mapper, filmId);
 
             if (getFilm == null) {
-                log.trace("Не найден фильм с id: " + film_id);
+                log.trace("Не найден фильм с id: " + filmId);
                 return Optional.empty();
             } else {
                 log.trace("Найден фильм: " + getFilm);
-                getFilm.setGenres(getGenresForFilm(film_id));
+                getFilm.setGenres(getGenresForFilm(filmId));
 
                 return Optional.of(getFilm);
             }
         } catch (EmptyResultDataAccessException ignored) {
-            log.trace("Не найдено результатов для film_id: " + film_id);
+            log.trace("Не найдено результатов для film_id: " + filmId);
             return Optional.empty();
         } catch (Exception e) {
             //e.printStackTrace();
@@ -218,19 +218,19 @@ public class FilmDbStorage implements FilmStorage {
 
     // Вернуть список фильмов с определенным рейтингом MPA
     @Override
-    public List<Film> getFilmsByMPA(Long mpa_id) {
+    public List<Film> getFilmsByMPA(Long mpaId) {
         String sqlQuery =
                 "SELECT f.id, f.title, f.description, f.release_date, f.duration, m.mpa_id " +
                         "FROM  films AS f " +
                         "LEFT JOIN mpa AS m ON f.mpa_id = m.id" +
                         "WHERE m.id = ?";
-        if (mpa_id <= 0) {
+        if (mpaId <= 0) {
             throw new ValidationException("Рейтинг MPA не может быть пустым.");
         }
         try {
             //RowMapper<Film> используется для преобразования каждой строки результата SQL-запроса в объект типа User
             // Метод jdbcTemplate.queryForObject для вывода одного объекта, одной строки
-            List<Film> getList = jdbcTemplate.query(sqlQuery, mapper, mpa_id);
+            List<Film> getList = jdbcTemplate.query(sqlQuery, mapper, mpaId);
             return getList;
         } catch (EmptyResultDataAccessException ignored) {
             return null;

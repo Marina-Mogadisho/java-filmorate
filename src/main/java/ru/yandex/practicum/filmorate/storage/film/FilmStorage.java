@@ -11,13 +11,13 @@ public interface FilmStorage {
 
     public Film createFilm(Film film);
 
-    public void deleteFilm(Long film_id);
+    public void deleteFilm(Long filmId);
 
     public Film updateFilm(Film film);
 
-    public Optional<Film> getFilmByID(Long film_id);
+    public Optional<Film> getFilmByID(Long filmId);
 
     public List<Film> getAllFilms();
 
-    public List<Film> getFilmsByMPA(Long mpa_id);
+    public List<Film> getFilmsByMPA(Long mpaId);
 }

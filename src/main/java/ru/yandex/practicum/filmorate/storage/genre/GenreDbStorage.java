@@ -18,24 +18,24 @@ public class GenreDbStorage implements GenreStorage {
 
 
     @Override
-    public List<Genre> getListGenre(int id_film) {
+    public List<Genre> getListGenre(int filmId) {
         String sqlQuery =
                 "SELECT genre_name" +
                         "FROM film_genre" +
                         "JOIN genre ON film_genre.genre_id = genre.genre_id" +
                         "WHERE film_id = ?";
         try {
-            return jdbcTemplate.query(sqlQuery, mapper, id_film);
+            return jdbcTemplate.query(sqlQuery, mapper, filmId);
         } catch (EmptyResultDataAccessException ignored) {
             return null;
         }
     }
 
     @Override
-    public Genre getGenre(int id_genre) {
+    public Genre getGenre(int genreId) {
         String sqlQuery = "SELECT id AS genre_id, name AS genre_name FROM genre WHERE id=?";
         try {
-            List<Genre> list = jdbcTemplate.query(sqlQuery, mapper, id_genre);
+            List<Genre> list = jdbcTemplate.query(sqlQuery, mapper, genreId);
             return list.get(0);
         } catch (EmptyResultDataAccessException ignored) {
             return null;

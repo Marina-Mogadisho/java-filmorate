@@ -60,9 +60,9 @@ public class UserDbStorage implements UserStorage {
 
     //@DeleteMapping
     @Override
-    public void deleteUser(Long user_id) {
+    public void deleteUser(Long userId) {
         // проверяем выполнение необходимых условий
-        if (user_id <= 0) {
+        if (userId <= 0) {
             throw new ValidationException("Необходимо указать id пользователя, которого нужно удалить.");
         }
         String sqlQuery = "DELETE FROM users WHERE id = ?";
@@ -71,7 +71,7 @@ public class UserDbStorage implements UserStorage {
         int rez = jdbcTemplate.update(connection -> {
             // препарируем запрос, чтобы можно было вставить туда аргументы
             PreparedStatement stmt = connection.prepareStatement(sqlQuery);
-            stmt.setLong(1, user_id); // в запрос подставляем переменную id, которая будет в строке запроса
+            stmt.setLong(1, userId); // в запрос подставляем переменную id, которая будет в строке запроса
             return stmt;
         });
         if (rez <= 0) log.trace("Не удалось произвести удаление.");
