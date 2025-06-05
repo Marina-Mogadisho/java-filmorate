@@ -26,7 +26,7 @@ import java.util.Set;
 @Service //к ним можно будет получить доступ из контроллера.
 @RequiredArgsConstructor // то же самое, если использовать конструктор с @Autowired
 public class UserDbService {
-    final UserDbStorage userDbStorage;
+    private final UserDbStorage userDbStorage;
     private final JdbcTemplate jdbcTemplate;
     /*
     user отправляет заявку в друзья пользователю friend и тем самым
@@ -42,7 +42,7 @@ public class UserDbService {
         Set<Long> b = user.get().getFriends(); // Достали список id друзей типа Set, т.е. без повторений
 
         // Если такого id нет в списке, то он добавился в список друзей, и переменная а=true
-        if (isFriends(userId, friendId)) { // Для проверки наличия дружбы между пользователями,
+        if (isFriends(userId, friendId, false)) { // Для проверки наличия дружбы между пользователями,
             throw new ValidationException("Пользователь с id " + friendId + " уже есть в списке друзей пользователя User");
         }
 
@@ -53,13 +53,7 @@ public class UserDbService {
         return user;
     }
 
-    //Для проверки наличия дружбы между пользователями,
-    // метод, который проверяет наличие записи в таблице Friendships:
-    public boolean isFriends(Long userId, Long friendId) {
-        String sql = "SELECT COUNT(*) FROM friendships WHERE user_id = ? AND friend_id = ?";
-        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId, friendId);
-        return count > 0;
-    }
+
 
 
     // Метод удаления друга Friend из списка друзей пользователя User
@@ -67,7 +61,7 @@ public class UserDbService {
     public Optional<User> deleteFriend(Long userId, Long friendId) {
         validation(userId, friendId); // проверяем существуют ли такие пользователи
         //проверяем являются ли пользователи друзьями
-        if (!friendsTrue(userId, friendId)) {
+        if (!isFriends(userId, friendId, true)) {
             throw new ValidationException("Пользователь с id " + friendId +
                     " не в списке друзей пользователя с id " + userId);
         }
@@ -146,14 +140,17 @@ public class UserDbService {
     }
 
     //Вспомогательный метод, проверяем являются ли пользователи друзьями
-    public boolean friendsTrue(Long userId, Long friendId) {
-        String sqlQuery = "SELECT COUNT(*) FROM friendships WHERE user_id = ? AND friend_id = ?";
-        Integer count = jdbcTemplate.queryForObject(sqlQuery, Integer.class, userId, friendId);
-        return count >= 0;
+    // метод, который проверяет наличие записи в таблице Friendships:
+    //Для проверки наличия дружбы между пользователями,
+    public boolean isFriends(Long userId, Long friendId,boolean isUseNull) {
+        String sql = "SELECT COUNT(*) FROM friendships WHERE user_id = ? AND friend_id = ?";
+        Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId, friendId);
+        // isUseNull=true, когда нужно использовать в методе
+        if(isUseNull)return count >= 0;
+        else return count > 0;
     }
 
-
-    //Вспомогательный метод, проверяем существуют ли пользователи с указанными в запросе id
+       //Вспомогательный метод, проверяем существуют ли пользователи с указанными в запросе id
     private void validation(Long userId, Long friendId) {
         Set<Long> setIdUsers = userDbStorage.getAllIdUsers();
         if (userId.equals(friendId)) {

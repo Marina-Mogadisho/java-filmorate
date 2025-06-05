@@ -93,26 +93,24 @@ public class FilmDbService {
     //GET /films/popular?count={count} — возвращает список из первых count фильмов по количеству лайков.
     // Если значение параметра count не задано, верните первые 10
     public List<Film> getListFilmsPopular(Integer count) {
-        if (count == null || count <= 0) count = 10;
-
         String sqlQuery =
-                "select f.id, f.title, f.description, f.release_date, f.duration, m.mpa_id, m.mpa_name, ff.like_count" +
-                        " FROM films AS f,mpa AS m, " +
-                        " (SELECT lf.film_id as f_id, COUNT(lf.user_id) AS like_count " +
-                        " from like_film as lf " +
-                        " GROUP BY lf.film_id " +
-                        " ORDER BY like_count DESC " +
-                        " LIMIT ? " +
-                        " ) as ff" +
-                        " where f.mpa_id = m.mpa_id " +
-                        " and f.id =ff.f_id" +
-                        " order by ff.like_count desc ";
+                "SELECT f.id, f.title, f.description, f.release_date, f.duration, m.mpa_id, m.mpa_name, ff.like_count " +
+                        "FROM films AS f " +
+                        "JOIN mpa AS m ON f.mpa_id = m.mpa_id " +
+                        "JOIN " +
+                        "(SELECT lf.film_id AS f_id, COUNT(lf.user_id) AS like_count " +
+                        "FROM like_film AS lf " +
+                        "GROUP BY lf.film_id " +
+                        "ORDER BY like_count DESC " +
+                        "LIMIT ? " +
+                        ") AS ff ON f.id = ff.f_id " +
+                        "ORDER BY ff.like_count DESC;";
 
         List<Film> filmList;
         try {
             filmList = jdbcTemplate.query(sqlQuery, filmRowMapper, count);
         } catch (Exception e) {
-            throw new NotFoundException("ERROR !!!!!!!!!!!\n" + e);
+            throw new NotFoundException("Не могу возвратить список из первых count фильмов по количеству лайков." + e);
         }
         return filmList;
     }

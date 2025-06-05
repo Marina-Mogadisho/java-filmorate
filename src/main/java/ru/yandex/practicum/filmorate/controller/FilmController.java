@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Positive;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
@@ -17,17 +18,10 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping("/films")
-
+@RequiredArgsConstructor
 public class FilmController {
-    FilmDbService filmDbService;
-    FilmDbStorage filmDbStorage;
-
-
-    @Autowired
-    public FilmController(FilmDbService filmDbService, FilmDbStorage filmDbStorage) {
-        this.filmDbService = filmDbService;
-        this.filmDbStorage = filmDbStorage;
-    }
+    private final FilmDbService filmDbService;
+    private final FilmDbStorage filmDbStorage;
 
     //GET/films - вывести все фильмы
     @GetMapping

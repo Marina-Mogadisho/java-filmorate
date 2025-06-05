@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -14,15 +15,10 @@ import java.util.Optional;
 @Slf4j
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 public class UserController {
-    UserDbService userDbService;
-    UserDbStorage userDbStorage;
-
-    @Autowired
-    public UserController(UserDbService userDbService, UserDbStorage userDbStorage) {
-        this.userDbService = userDbService;
-        this.userDbStorage = userDbStorage;
-    }
+    private final UserDbService userDbService;
+    private final UserDbStorage userDbStorage;
 
     //GET /users — для получения списка пользователей.
     @GetMapping  //метод обрабатывает HTTP-запросы GET с корневым путем  /users
