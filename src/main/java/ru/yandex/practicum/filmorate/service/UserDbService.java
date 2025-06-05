@@ -54,8 +54,6 @@ public class UserDbService {
     }
 
 
-
-
     // Метод удаления друга Friend из списка друзей пользователя User
 //DELETE /users/{id}/friends/{friendId}
     public Optional<User> deleteFriend(Long userId, Long friendId) {
@@ -142,15 +140,15 @@ public class UserDbService {
     //Вспомогательный метод, проверяем являются ли пользователи друзьями
     // метод, который проверяет наличие записи в таблице Friendships:
     //Для проверки наличия дружбы между пользователями,
-    public boolean isFriends(Long userId, Long friendId,boolean isUseNull) {
+    public boolean isFriends(Long userId, Long friendId, boolean isUseNull) {
         String sql = "SELECT COUNT(*) FROM friendships WHERE user_id = ? AND friend_id = ?";
         Integer count = jdbcTemplate.queryForObject(sql, Integer.class, userId, friendId);
         // isUseNull=true, когда нужно использовать в методе
-        if(isUseNull)return count >= 0;
+        if (isUseNull) return count >= 0;
         else return count > 0;
     }
 
-       //Вспомогательный метод, проверяем существуют ли пользователи с указанными в запросе id
+    //Вспомогательный метод, проверяем существуют ли пользователи с указанными в запросе id
     private void validation(Long userId, Long friendId) {
         Set<Long> setIdUsers = userDbStorage.getAllIdUsers();
         if (userId.equals(friendId)) {
