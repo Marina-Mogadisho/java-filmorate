@@ -3,18 +3,21 @@ package ru.yandex.practicum.filmorate.storage.film;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 //в интерфейсе
-// определены методы добавления, удаления и модификации объектов.
+// определены методы обеспечивающие базовые операции CRUD
 public interface FilmStorage {
-    public List<Film> findAll();
 
-    public Film create(Film film);
+    public Film createFilm(Film film);
 
-    public Film update(Film newFilm);
+    public void deleteFilm(Long filmId);
 
-    public Set<Long> getAllIdFilms();
+    public Film updateFilm(Film film);
 
-    public Film getFilm(Long idFilm);
+    public Optional<Film> getFilmByID(Long filmId);
+
+    public List<Film> getAllFilms();
+
+    public List<Film> getFilmsByMPA(Long mpaId);
 }
